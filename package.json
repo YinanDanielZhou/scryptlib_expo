@@ -1,14 +1,9 @@
 {
   "name": "scryptlib-expo",
-  "version": "2.2.6",
+  "version": "0.0.1",
   "description": "Javascript SDK for integration of Bitcoin SV Smart Contracts written in sCrypt language.",
-  "bin": "bin/cli.js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "browser": {
-    "child_process": false,
-    "fs": false
-  },
   "scripts": {
     "compile": "tsc -b",
     "watch": "tsc -b -w",
@@ -26,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sCrypt-Inc/scryptlib.git"
+    "url": "git+https://github.com/YinanDanielZhou/scryptlib_expo"
   },
   "keywords": [
     "bsv",
@@ -34,10 +29,10 @@
     "Javascript",
     "API"
   ],
-  "author": "sCrypt.Inc",
+  "author": "Yinan Zhou (forked from sCrypt.Inc/scryptlib)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sCrypt-Inc/scryptlib/issues"
+    "url": "https://github.com/YinanDanielZhou/scryptlib_expo/issues"
   },
   "homepage": "https://github.com/sCrypt-Inc/scryptlib#readme",
   "devDependencies": {

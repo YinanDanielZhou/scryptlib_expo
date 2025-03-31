@@ -1,7 +1,6 @@
 /* eslint-env node */
 module.exports = {
     "env": {
-        // "browser": true,
         "react-native": true,
         "es2021": true
     },

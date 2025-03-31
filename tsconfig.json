@@ -18,15 +18,21 @@
         }
     },
     "compilerOptions": {
-        "target": "es2020",
+        "target": "ES2020",
+        "module": "CommonJS", // Use CommonJS for better compatibility with older Expo versions
         "lib": [
-            "dom",
-            "dom.iterable",
-            "esnext",
+            "DOM",
+            "DOM.Iterable",
+            "ESNext",
             "ES2020.BigInt"
-        ],
-        "module": "commonjs",
-        "outDir": "./dist",
+        ], // Include DOM for web compatibility and ES6 for modern features
+        "esModuleInterop": true, // Enable interop between CommonJS and ES Modules
+        "jsx": "react-native", // Use React Native JSX mode (important for React Native components)
+        "outDir": "dist", // Output directory for compiled files
+        "rootDir": "src", // Source directory for your TypeScript files
+        "noUnusedLocals": true, // Report unused local variables
+        "noUnusedParameters": true, // Report unused parameters
+        "noFallthroughCasesInSwitch": true, // Report errors for fallthrough cases in switch statements
         "alwaysStrict": true,
         "strict": false,
         "strictPropertyInitialization": false,

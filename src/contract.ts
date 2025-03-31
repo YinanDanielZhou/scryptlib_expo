@@ -1,8 +1,7 @@
-import { basename, dirname, join } from 'path';
 import { ABIEntityType, Argument, LibraryEntity, ParamEntity, parseGenericType } from '.';
-import { ContractEntity, getFullFilePath, loadSourceMapfromArtifact, OpCode, StaticEntity } from './compilerWrapper';
+import { ContractEntity, loadSourceMapfromArtifact, OpCode, StaticEntity } from './compilerWrapper';
 import {
-  ABICoder, ABIEntity, AliasEntity, Arguments, bsv, buildContractCode, checkNOPScript, CompileResult, DEFAULT_FLAGS, findSrcInfoV1, findSrcInfoV2, FunctionCall, hash160, isArrayType, JSONParserSync, path2uri, resolveType, Script, StructEntity, subscript, TypeResolver, uri2path
+  ABICoder, ABIEntity, AliasEntity, Arguments, bsv, buildContractCode, checkNOPScript, CompileResult, DEFAULT_FLAGS, findSrcInfoV1, FunctionCall, hash160, isArrayType, resolveType, Script, StructEntity, subscript, TypeResolver
 } from './internal';
 import { Bytes, Int, isScryptType, SupportedParamType, SymbolType, TypeInfo } from './scryptTypes';
 import Stateful from './stateful';
@@ -99,7 +98,7 @@ export class AbstractContract {
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   /* eslint-disable @typescript-eslint/no-unused-vars */
-  constructor(...ctorParams: SupportedParamType[]) {
+  constructor(..._ctorParams: SupportedParamType[]) {
   }
 
   [key: string]: any;
@@ -343,21 +342,7 @@ export class AbstractContract {
     let error = `VerifyError: ${err.error}, fails at ${new bsv.Opcode(failedOpCode)}\n`;
 
     if (this.sourceMapFile) {
-      const sourceMapFilePath = uri2path(this.sourceMapFile);
-      const sourceMap = JSONParserSync(sourceMapFilePath);
-
-      const sourcePath = join(sourceMapFilePath, this.file);
-
-      const srcDir = dirname(sourcePath);
-      const sourceFileName = basename(sourcePath);
-
-      const sources = sourceMap.sources.map((source: string) => getFullFilePath(source, srcDir, sourceFileName));
-
-      const pos = findSrcInfoV2(err.failedAt.pc, sourceMap);
-
-      if (pos && sources[pos[1]]) {
-        error = `VerifyError: ${err.error} \n\t[Go to Source](${path2uri(sources[pos[1]])}#${pos[2]})  fails at ${new bsv.Opcode(failedOpCode)}\n`;
-      }
+      error = `VerifyError: ${err.error} \n\t[Go to Source](**SourceMapFile-feature was removed**)  fails at ${new bsv.Opcode(failedOpCode)}\n`;
     } else if (this.version <= 8) {
 
       const artifact = Object.getPrototypeOf(this).constructor.artifact as Artifact;
@@ -386,7 +371,7 @@ export class AbstractContract {
 
           // in vscode termianal need to use [:] to jump to file line, but here need to use [#] to jump to file line in output channel.
           if (opcode && opcode.pos) {
-            error = `VerifyError: ${err.error} \n\t[Go to Source](${path2uri(opcode.pos.file)}#${opcode.pos.line})  fails at ${new bsv.Opcode(failedOpCode)}\n`;
+            error = `VerifyError: ${err.error} \n\t[Go to Source](**Feature Removed**)  fails at ${new bsv.Opcode(failedOpCode)}\n`;
           }
         }
       }
@@ -395,29 +380,9 @@ export class AbstractContract {
   }
 
 
-  /**
-   * Generate a debugger launch configuration for the contract's last called public method
-   * @param txContext
-   * @returns a uri of the debugger launch configuration
-   */
-  public genLaunchConfig(txContext?: TxContext): string {
-
-    const txCtx = Object.assign({}, this.txContext || {}, txContext || {}) as TxContext;
-
-    const lastCalledPubFunction = this.lastCalledPubFunction();
-
-    if (lastCalledPubFunction) {
-      const debugUrl = lastCalledPubFunction.genLaunchConfig(txCtx);
-      return `[Launch Debugger](${debugUrl.replace(/file:/i, 'scryptlaunch:')})\n`;
-    }
-    throw new Error('No public function called');
-  }
-
-
-
   private _dataPartInHex: string;
 
-  set dataPart(dataInScript: Script | undefined) {
+  set dataPart(_dataInScript: Script | undefined) {
     throw new Error('Setter for dataPart is not available. Please use: setDataPart() instead');
   }
 
@@ -520,17 +485,6 @@ export class AbstractContract {
     }
 
     return [];
-  }
-
-  private lastCalledPubFunction(): FunctionCall | undefined {
-
-    const index = this.calledPubFunctions.length - 1;
-
-    if (index < 0) {
-      return undefined;
-    }
-
-    return this.calledPubFunctions[index];
   }
 
   public ctorArgs(): Arguments {

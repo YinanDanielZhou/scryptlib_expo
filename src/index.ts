@@ -1,19 +1,19 @@
+import { Buffer } from 'buffer';
+globalThis.Buffer = Buffer;
+
 export {
-  buildContractClass, compile, compileAsync, compileContract, doCompileAsync, getPreimage, signTx,
-  handleCompilerOutput, compileContractAsync, CompilingSettings, CompileResult
+  buildContractClass, getPreimage, signTx, CompilingSettings, CompileResult
 } from './internal';
 
 export {
   bsv, toHex, bin2num, int2Asm, bytes2Literal, bytesToHexString, getValidatedHexString,
   findStructByType, findStructByName, isArrayType,
-  arrayTypeAndSize, newCall, getNameByType, genLaunchConfigFile, subArrayType,
-  isGenericType, parseGenericType,
-  readLaunchJson, getLowSPreimage, parseAbiFromUnlockingScript, findConstStatic, findStatic, resolveConstValue,
+  arrayTypeAndSize, newCall, getNameByType, subArrayType,
+  isGenericType, parseGenericType, getLowSPreimage, parseAbiFromUnlockingScript, findConstStatic, findStatic, resolveConstValue,
   arrayTypeAndSizeStr, toLiteralArrayType,
   librarySign, structSign, resolveGenericType,
   buildTypeResolver, getStructDeclaration, getABIDeclaration, typeOfArg,
-  compilerVersion, parseLiteral,
-  isEmpty, JSONParser, getFullFilePath, path2uri, uri2path, md5, FunctionCall, stringToBytes, isScryptType, isSubBytes, toJSON,
+  isEmpty, FunctionCall, isScryptType, isSubBytes,
   getSortedItem, flatternArg,
 } from './internal';
 
@@ -29,10 +29,6 @@ export {
 
 //Equivalent to the built-in functions
 export { hash160, sha256, hash256, and, or, xor, invert, num2bin, buildOpreturnScript, len, buildPublicKeyHashScript, writeVarint, toLEUnsigned } from './internal';
-
-export {
-  getPlatformScryptc, findCompiler
-} from './internal';
 
 export {
   partialSha256, sha256ByPartialHash

@@ -1,16 +1,11 @@
-import { parseChunked, stringifyStream } from '@discoveryjs/json-ext';
 import * as bsv from '@scrypt-inc/bsv';
-import * as crypto from 'crypto';
-import * as fs from 'fs';
-import { join } from 'path';
 import { decode } from '@jridgewell/sourcemap-codec';
-import { fileURLToPath, pathToFileURL } from 'url';
 
 export { bsv };
 
 import { ABIEntity, LibraryEntity } from '.';
-import { compileAsync, OpCode } from './compilerWrapper';
-import { AbstractContract, compile, CompileResult, findCompiler, getValidatedHexString, Script, ScryptType, StructEntity, SupportedParamType } from './internal';
+import { OpCode } from './compilerWrapper';
+import { AbstractContract, getValidatedHexString, Script, ScryptType, StructEntity, SupportedParamType } from './internal';
 import { arrayTypeAndSizeStr, isGenericType, parseGenericType } from './typeCheck';
 
 const BN = bsv.crypto.BN;
@@ -239,27 +234,6 @@ export function isNode(): boolean {
 }
 
 
-export function path2uri(path: string): string {
-
-  if (isNode()) {
-    return pathToFileURL(path).toString();
-  } else {
-    return path;
-  }
-}
-
-export function uri2path(uri: string): string {
-  if (isNode()) {
-    return fileURLToPath(uri);
-  } else {
-    return uri;
-  }
-
-}
-
-
-
-
 export function findStructByName(name: string, s: StructEntity[]): StructEntity | undefined {
   return s.find(s => {
     return s.name == name;
@@ -322,99 +296,15 @@ export function subscript(index: number, arraySizes: Array<number>): string {
 }
 
 
-
-export function readFileByLine(path: string, index: number): string {
-
-  let result = '';
-  fs.readFileSync(path, 'utf8').split(/\r?\n/).every(function (line, i) {
-    if (i === (index - 1)) {
-      result = line;
-      return false;
-    }
-    return true;
-  });
-
-  return result;
-}
-
-
 export function isEmpty(obj: any): boolean {
   return Object.keys(obj).length === 0;
 }
 
 
 
-
-export function compileContract(file: string, options?: {
-  out?: string,
-  sourceMap?: boolean,
-  artifact?: boolean,
-  optimize?: boolean,
-}): CompileResult {
-  options = Object.assign({
-    out: join(__dirname, '../out'),
-    sourceMap: false,
-    artifact: false,
-    optimize: false,
-  }, options);
-  if (!fs.existsSync(file)) {
-    throw (`file ${file} not exists!`);
-  }
-
-  if (!fs.existsSync(options.out as string)) {
-    fs.mkdirSync(options.out as string);
-  }
-
-
-  const result = compile(
-    { path: file },
-    {
-      artifact: options.artifact, outputDir: options.out,
-      sourceMap: options.sourceMap,
-      optimize: options.optimize,
-      cmdPrefix: findCompiler()
-    }
-  );
-
-  return result;
-}
-
-
-export function compileContractAsync(file: string, options?: {
-  out?: string,
-  artifact?: boolean,
-  sourceMap?: boolean,
-  optimize?: boolean,
-}): Promise<CompileResult> {
-  options = Object.assign({
-    out: join(__dirname, '..', 'out'),
-    sourceMap: false,
-    artifact: false,
-    optimize: false,
-  }, options);
-  if (!fs.existsSync(file)) {
-    throw (`file ${file} not exists!`);
-  }
-
-  if (!fs.existsSync(options.out as string)) {
-    fs.mkdirSync(options.out as string);
-  }
-
-  return compileAsync({ path: file }, {
-    artifact: options.artifact, outputDir: options.out,
-    sourceMap: options.sourceMap,
-    optimize: options.optimize,
-    hex: true,
-    cmdPrefix: findCompiler()
-  });
-}
-
-
 export function newCall(Cls: typeof AbstractContract, args: Array<SupportedParamType>): AbstractContract {
   return new (Function.prototype.bind.apply(Cls, [null].concat(args)));
 }
-
-
 
 
 export function resolveConstValue(node: any): string | undefined {
@@ -537,45 +427,6 @@ export function structSign(structEntity: StructEntity): string {
   }), {}), null, 4)}`;
 }
 
-
-
-
-
-export async function JSONParser(file: string): Promise<boolean> {
-
-  return new Promise((resolve, reject) => {
-
-    parseChunked(fs.createReadStream(file))
-      .then(data => {
-        resolve(data);
-      })
-      .catch(e => {
-        reject(e);
-      });
-
-  });
-}
-
-export function JSONParserSync(file: string): any {
-  return JSON.parse(fs.readFileSync(file, 'utf8'));
-}
-
-
-export async function JSONStringify(file: string, data: unknown): Promise<boolean> {
-  return new Promise((resolve, reject) => {
-    stringifyStream(data)
-      .pipe(fs.createWriteStream(file))
-      .on('finish', () => {
-        resolve(true);
-      })
-      .on('error', (e) => {
-        reject(e);
-      });
-  });
-}
-
-
-
 export function findSrcInfoV2(pc: number, sourceMap: unknown): number[] | undefined {
 
   const decoded = decode(sourceMap['mappings']);
@@ -603,14 +454,6 @@ export function findSrcInfoV1(opcodes: OpCode[], opcodesIndex: number): OpCode |
       return opcodes[opcodesIndex];
     }
   }
-}
-
-
-export function md5(s: string): string {
-
-  const md5 = crypto.createHash('md5');
-
-  return md5.update(s).digest('hex');
 }
 
 

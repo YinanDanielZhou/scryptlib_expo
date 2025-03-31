@@ -19,7 +19,6 @@
     "td": "mocha",
     "pretest": "ts-node test/fixture/autoCompile.ts",
     "disabled-prepare": "husky install && npm run compile",
-    "disabled-postinstall": "node ./postinstall.js",
     "publishcheck": "sh ./publishcheck.sh",
     "prepublishOnly": "npm run testlint && npm run compile",
     "getBinary": "node ./util/getBinary.js",

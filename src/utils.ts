@@ -1,5 +1,4 @@
 import * as bsv from '@scrypt-inc/bsv';
-import { decode } from '@jridgewell/sourcemap-codec';
 
 export { bsv };
 
@@ -426,23 +425,6 @@ export function structSign(structEntity: StructEntity): string {
     [v.name]: v.type
   }), {}), null, 4)}`;
 }
-
-export function findSrcInfoV2(pc: number, sourceMap: unknown): number[] | undefined {
-
-  const decoded = decode(sourceMap['mappings']);
-
-  for (let index = 0; index < decoded[0].length; index++) {
-    const element = decoded[0][index];
-
-    if (element[0] <= pc) {
-      continue;
-    }
-    return decoded[0][index - 1];
-  }
-
-  return decoded[0][decoded[0].length - 1];
-}
-
 
 /**
  * @deprecated use findSrcInfoV2
